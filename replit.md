@@ -56,6 +56,10 @@ rivalis-hub/
 - Firebase authentication is pre-configured
 
 ## Recent Changes
-- Initial project setup from GitHub import
+- Initial project setup from GitHub import (October 23, 2025)
 - All PNG assets moved to assets/images/
-- Vite configured for Replit environment (port 5000, 0.0.0.0 host)
+- Vite configured for Replit environment:
+  - Port 5000 on 0.0.0.0 host
+  - allowedHosts set to ['all'] to support Replit proxy
+- Dependencies installed: React 18, Vite 4.5, Firebase 10, React Router 6, Emoji Mart
+- Deployment configured for autoscale with preview server
