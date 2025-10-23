@@ -57,6 +57,7 @@ button:hover {
 .navbar {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 1rem;
   background-color: rgba(0,0,0,0.7);
   color: #fff;
@@ -66,6 +67,12 @@ button:hover {
 .logo {
   font-size: 1.5rem;
   font-weight: bold;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .menu {

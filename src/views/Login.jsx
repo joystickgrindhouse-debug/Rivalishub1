@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { auth } from "../firebase.js";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { generateAvatarForUser } from "../avatarService.js";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -12,7 +13,8 @@ export default function Login() {
     e.preventDefault();
     try {
       if (isSignup) {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await generateAvatarForUser(userCredential.user);
       } else {
         await signInWithEmailAndPassword(auth, email, password);
       }
