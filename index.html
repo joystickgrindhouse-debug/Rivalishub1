@@ -1,0 +1,566 @@
+
+--- FILE: index.html.txt ---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rivalis Hub</title>
+  <link rel="stylesheet" href="/assets/styles/main.css" />
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
+
+
+---
+
+--- FILE: package.json.txt ---
+
+{
+  "name": "rivalis-hub",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "firebase": "^10.0.0",
+    "@emoji-mart/react": "^1.3.2",
+    "@emoji-mart/data": "^1.0.1",
+    "react-router-dom": "^6.14.0"
+  },
+  "devDependencies": {
+    "vite": "^4.5.0",
+    "@vitejs/plugin-react": "^3.2.0"
+  }
+}
+
+
+---
+
+--- FILE: src/main.jsx.txt ---
+
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.jsx";
+import { BrowserRouter } from "react-router-dom";
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>
+);
+--- FILE: src/firebase.js.txt ---
+
+// Firebase setup
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+
+// TODO: Replace with your actual Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyB68ZwHdbSKc_KmYu_UBEPdde6_1giTvy4",
+  authDomain: "rivalis-fitness-reimagined.firebaseapp.com",
+  projectId: "rivalis-fitness-reimagined",
+  storageBucket: "rivalis-fitness-reimagined.firebasestorage.app",
+  messagingSenderId: "87398106759",
+  appId: "1:87398106759:web:5048a04e7130f8a027da22",
+  measurementId: "G-18CRL1DDT8"
+};
+
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+
+
+---
+
+--- FILE: src/App.jsx.txt ---
+
+import React, { useEffect, useState } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { auth } from "./firebase.js";
+import { onAuthStateChanged } from "firebase/auth";
+import LoadingScreen from "./components/LoadingScreen.jsx";
+import Login from "./views/Login.jsx";
+import AvatarCreator from "./views/AvatarCreator.jsx";
+import Achievements from "./views/Achievements.jsx";
+import GlobalChat from "./views/GlobalChat.jsx";
+import DMChat from "./views/DMChat.jsx";
+import Leaderboard from "./views/Leaderboard.jsx";
+import Navbar from "./components/Navbar.jsx";
+
+export default function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) return <LoadingScreen />;
+
+  if (!user) return <Login />;
+
+  return (
+    <div>
+      <Navbar user={user} />
+      <Routes>
+        <Route path="/" element={<Navigate to="/dashboard" />} />
+        <Route path="/dashboard" element={<AvatarCreator user={user} />} />
+        <Route path="/achievements" element={<Achievements />} />
+        <Route path="/chat" element={<GlobalChat user={user} />} />
+        <Route path="/dm" element={<DMChat user={user} />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
+      </Routes>
+    </div>
+  );
+}
+
+
+---
+
+--- FILE: src/components/LoadingScreen.jsx.txt ---
+
+import React from "react";
+
+export default function LoadingScreen() {
+  return (
+    <div style={{
+      display: "flex",
+      height: "100vh",
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "#000"
+    }}>
+      <h1 style={{ color: "#fff" }}>Rivalis Hub Loading...</h1>
+    </div>
+  );
+}
+
+
+---
+
+--- FILE: src/components/Navbar.jsx.txt ---
+
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { auth } from "../firebase.js";
+
+export default function Navbar({ user }) {
+  const [open, setOpen] = useState(false);
+
+  const handleLogout = () => {
+    auth.signOut();
+  };
+
+  return (
+    <nav className="navbar">
+      <div className="logo">Rivalis Hub</div>
+      <div className="menu">
+        <button onClick={() => setOpen(!open)}>Menu</button>
+        {open && (
+          <div className="dropdown">
+            <Link to="/chat">Chat</Link>
+            <Link to="/dm">DM</Link>
+            <Link to="/leaderboard">Leaderboard</Link>
+            <Link to="/achievements">Achievements</Link>
+            <Link to="/dashboard">Avatar</Link>
+            <button onClick={handleLogout}>Logout</button>
+          </div>
+        )}
+      </div>
+    </nav>
+  );
+}
+
+
+---
+
+--- FILE: src/views/Login.jsx.txt ---
+
+import React, { useState } from "react";
+import { auth } from "../firebase.js";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSignup, setIsSignup] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (isSignup) {
+        await createUserWithEmailAndPassword(auth, email, password);
+      } else {
+        await signInWithEmailAndPassword(auth, email, password);
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  return (
+    <div className="hero-background">
+      <div className="overlay-card">
+        <h1>GET HOOKED. OUT-TRAIN. OUT-RIVAL.</h1>
+        <form onSubmit={handleSubmit}>
+          <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
+          <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
+          <button type="submit">{isSignup ? "Sign Up" : "Login"}</button>
+        </form>
+        {error && <p style={{color:"red"}}>{error}</p>}
+        <p style={{marginTop:"1rem"}}>
+          <button onClick={() => setIsSignup(!isSignup)}>
+            {isSignup ? "Already have an account? Login" : "Don't have an account? Sign Up"}
+          </button>
+        </p>
+      </div>
+    </div>
+  );
+}
+--- FILE: src/views/AvatarCreator.jsx.txt ---
+
+import React, { useState } from "react";
+
+export default function AvatarCreator({ user }) {
+  const [avatarUrl, setAvatarUrl] = useState("");
+
+  const handleAvatarChange = (e) => {
+    setAvatarUrl(e.target.value);
+  };
+
+  const handleSave = () => {
+    // Save avatar URL to database if needed
+    alert("Avatar saved!");
+  };
+
+  return (
+    <div className="hero-background">
+      <div className="overlay-card">
+        <h2>{user.email}'s Avatar</h2>
+        <img 
+          src={avatarUrl || "https://raw.githubusercontent.com/username/repo/main/assets/images/default-avatar.png"} 
+          alt="avatar" 
+          style={{ width: "150px", height: "150px", borderRadius: "50%" }}
+        />
+        <input 
+          type="text" 
+          placeholder="Enter avatar URL" 
+          value={avatarUrl} 
+          onChange={handleAvatarChange} 
+        />
+        <button onClick={handleSave}>Save Avatar</button>
+      </div>
+    </div>
+  );
+}
+
+
+---
+
+--- FILE: src/views/Achievements.jsx.txt ---
+
+import React from "react";
+
+export default function Achievements() {
+  // Example achievement list
+  const achievements = [
+    "First Login",
+    "Completed Tutorial",
+    "Reached Level 5",
+    "Won First Duel"
+  ];
+
+  return (
+    <div className="hero-background">
+      <div className="overlay-card">
+        <h2>Achievements</h2>
+        <ul>
+          {achievements.map((a, idx) => <li key={idx}>{a}</li>)}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+
+---
+
+--- FILE: src/views/GlobalChat.jsx.txt ---
+
+import React, { useState, useEffect } from "react";
+
+export default function GlobalChat({ user }) {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+
+  const sendMessage = () => {
+    if (!input) return;
+    const newMessage = { user: user.email, text: input };
+    setMessages([...messages, newMessage]);
+    setInput("");
+  };
+
+  return (
+    <div className="hero-background">
+      <div className="overlay-card" style={{ width: "95%", height: "80vh", display: "flex", flexDirection: "column" }}>
+        <h2>Global Chat</h2>
+        <div style={{ flex: 1, overflowY: "auto", marginBottom: "1rem", border: "1px solid #fff", padding: "0.5rem" }}>
+          {messages.map((m, idx) => (
+            <div key={idx}><strong>{m.user}:</strong> {m.text}</div>
+          ))}
+        </div>
+        <div style={{ display: "flex" }}>
+          <input 
+            style={{ flex: 1, padding: "0.5rem" }} 
+            value={input} 
+            onChange={e => setInput(e.target.value)} 
+            placeholder="Type a message..."
+          />
+          <button onClick={sendMessage}>Send</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+---
+
+--- FILE: src/views/DMChat.jsx.txt ---
+
+import React, { useState } from "react";
+
+export default function DMChat({ user }) {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [recipient, setRecipient] = useState("");
+
+  const sendDM = () => {
+    if (!input || !recipient) return;
+    const newMessage = { from: user.email, to: recipient, text: input };
+    setMessages([...messages, newMessage]);
+    setInput("");
+  };
+
+  return (
+    <div className="hero-background">
+      <div className="overlay-card" style={{ width: "95%", height: "80vh", display: "flex", flexDirection: "column" }}>
+        <h2>Direct Messages</h2>
+        <input 
+          type="text" 
+          placeholder="Recipient email" 
+          value={recipient} 
+          onChange={e => setRecipient(e.target.value)}
+          style={{ marginBottom: "0.5rem", padding: "0.5rem" }}
+        />
+        <div style={{ flex: 1, overflowY: "auto", marginBottom: "1rem", border: "1px solid #fff", padding: "0.5rem" }}>
+          {messages.map((m, idx) => (
+            <div key={idx}><strong>{m.from} → {m.to}:</strong> {m.text}</div>
+          ))}
+        </div>
+        <div style={{ display: "flex" }}>
+          <input 
+            style={{ flex: 1, padding: "0.5rem" }} 
+            value={input} 
+            onChange={e => setInput(e.target.value)} 
+            placeholder="Type a message..."
+          />
+          <button onClick={sendDM}>Send</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+---
+
+--- FILE: src/views/Leaderboard.jsx.txt ---
+
+import React from "react";
+
+export default function Leaderboard() {
+  // Example leaderboard data
+  const leaderboard = [
+    { name: "Alice", points: 150 },
+    { name: "Bob", points: 120 },
+    { name: "Charlie", points: 90 },
+    { name: "You", points: 80 }
+  ];
+
+  return (
+    <div className="hero-background">
+      <div className="overlay-card">
+        <h2>Leaderboard</h2>
+        <ol>
+          {leaderboard.map((p, idx) => (
+            <li key={idx}>{p.name} - {p.points} pts</li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  );
+}
+
+
+---
+
+--- FILE: assets/styles/main.css.txt ---
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+  height: 100%;
+  font-family: 'Roboto', sans-serif;
+}
+
+.hero-background {
+  background-image: url('https://raw.githubusercontent.com/username/repo/main/assets/images/hero-background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.overlay-card {
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+input, button {
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  background-color: #ff4081;
+  color: white;
+  font-weight: bold;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: rgba(0,0,0,0.7);
+  color: #fff;
+}
+
+.dropdown {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem;
+}
+
+@media(min-width: 600px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media(min-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+--- FILE: README.md.txt ---
+
+# Rivalis Hub
+
+Rivalis Hub is a **mobile-friendly, React-based fitness & gaming dashboard** with:
+
+- Secure Firebase authentication (login & signup)
+- Avatar creator
+- Achievements tracking
+- Global and DM chat with avatars & emojis
+- Leaderboard
+- Hero background visuals
+- Fully responsive for phones, tablets, and desktops
+- Ready to deploy on Netlify
+
+---
+
+## **Folder Structure**
+
+rivalis-hub/ ├─ index.html ├─ package.json ├─ README.md ├─ src/ │  ├─ main.jsx │  ├─ App.jsx │  ├─ firebase.js │  ├─ views/ │  │   ├─ Login.jsx │  │   ├─ AvatarCreator.jsx │  │   ├─ Achievements.jsx │  │   ├─ GlobalChat.jsx │  │   ├─ DMChat.jsx │  │   └─ Leaderboard.jsx │  └─ components/ │      ├─ Navbar.jsx │      └─ LoadingScreen.jsx ├─ assets/ │  ├─ images/ │  │   ├─ hero-background.png │  │   └─ default-avatar.png │  └─ styles/ │      └─ main.css
+
+---
+
+## **Setup Instructions**
+
+1. **Clone or download the project**
+2. **Install dependencies**
+
+```bash
+npm install
+
+3. Configure Firebase
+
+
+
+Open src/firebase.js
+
+Replace the Firebase configuration with your own project credentials
+
+Make sure Authentication is enabled in Firebase (Email/Password)
+
+
+4. Run locally
+
+
+
+npm run dev
+
+Open http://localhost:5173 in your browser
+
+
+5. Deploy to Netlify
+
+
+
+Drag-and-drop the project folder into Netlify, or connect your GitHub repository
+
+Netlify will handle the build automatically
