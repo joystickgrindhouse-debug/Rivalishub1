@@ -60,6 +60,11 @@ rivalis-hub/
 - All PNG assets moved to assets/images/
 - Vite configured for Replit environment:
   - Port 5000 on 0.0.0.0 host
-  - allowedHosts set to ['all'] to support Replit proxy
+  - allowedHosts set to true to support Replit proxy
 - Dependencies installed: React 18, Vite 4.5, Firebase 10, React Router 6, Emoji Mart
 - Deployment configured for autoscale with preview server
+- DiceBear avatar system integrated:
+  - Updated to latest API v9.x endpoint
+  - Automatic avatar generation on signup
+  - Interactive avatar customizer with visual controls
+  - Avatars displayed in navbar and profile page

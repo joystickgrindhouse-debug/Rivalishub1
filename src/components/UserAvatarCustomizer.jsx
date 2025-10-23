@@ -2,15 +2,15 @@ import React, { useState, useEffect } from "react";
 import { auth } from "../firebase";
 import { generateAvatarForUser } from "../avatarService";
 
-const hairColors = ["brown", "blonde", "black", "red"];
-const eyeColors = ["black", "blue", "green", "brown"];
-const clothesColors = ["blue", "red", "green", "yellow"];
+const hairColors = ["auburn", "black", "blonde", "brown", "red", "gray"];
+const eyeStyles = ["happy", "wink", "surprised", "squint", "hearts", "side"];
+const clothesColors = ["black", "blue", "red", "gray", "green"];
 
 const UserAvatarCustomizer = () => {
   const [user, setUser] = useState(null);
   const [avatarURL, setAvatarURL] = useState("");
   const [hair, setHair] = useState(hairColors[0]);
-  const [eyes, setEyes] = useState(eyeColors[0]);
+  const [eyes, setEyes] = useState(eyeStyles[0]);
   const [clothes, setClothes] = useState(clothesColors[0]);
 
   useEffect(() => {
@@ -65,19 +65,23 @@ const UserAvatarCustomizer = () => {
 
       <div style={{ marginBottom: "10px" }}>
         <label>Eyes: </label>
-        {eyeColors.map((c) => (
+        {eyeStyles.map((style) => (
           <button
-            key={c}
+            key={style}
             style={{
-              backgroundColor: c,
-              width: "30px",
-              height: "30px",
+              padding: "5px 8px",
               margin: "3px",
-              border: eyes === c ? "2px solid black" : "1px solid gray",
-              borderRadius: "50%",
+              border: eyes === style ? "2px solid #ff4081" : "1px solid gray",
+              borderRadius: "5px",
+              backgroundColor: eyes === style ? "#ff4081" : "white",
+              color: eyes === style ? "white" : "black",
+              fontSize: "11px",
+              cursor: "pointer",
             }}
-            onClick={() => setEyes(c)}
-          />
+            onClick={() => setEyes(style)}
+          >
+            {style}
+          </button>
         ))}
       </div>
 
