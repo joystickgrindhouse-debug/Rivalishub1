@@ -140,7 +140,7 @@ const UserAvatarCustomizer = ({ user: propUser, isFirstTimeSetup = false, onSetu
         console.log("Completing first-time setup...");
         try {
           const setupResult = await UserService.completeUserSetup(user.uid, nickname, avatarURL);
-          console.log("Setup result:", JSON.stringify(setupResult));
+          console.log("Setup result success:", setupResult.success);
           
           if (setupResult.success) {
             console.log("Profile saved successfully!");
