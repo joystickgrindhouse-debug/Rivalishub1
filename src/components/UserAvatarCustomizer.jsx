@@ -140,28 +140,32 @@ const UserAvatarCustomizer = ({ user: propUser, isFirstTimeSetup = false, onSetu
         console.log("Completing first-time setup...");
         const setupResult = await UserService.completeUserSetup(user.uid, nickname, avatarURL);
         console.log("Setup result:", setupResult);
+        
         if (setupResult.success) {
-          const profileResult = await UserService.getUserProfile(user.uid);
-          console.log("Profile fetch result:", profileResult);
-          if (profileResult.success && profileResult.profile) {
-            console.log("Profile saved and retrieved successfully!");
-            alert("Profile created successfully! Welcome to Rivalis Hub!");
-            if (onSetupComplete) {
-              console.log("Calling onSetupComplete callback");
-              onSetupComplete(profileResult.profile);
-            }
-            navigate("/dashboard");
-          } else {
-            console.error("Failed to retrieve profile after save");
+          console.log("Profile saved successfully!");
+          alert("Profile created successfully! Welcome to Rivalis Hub!");
+          
+          if (onSetupComplete && setupResult.profile) {
+            console.log("Calling onSetupComplete callback");
+            onSetupComplete(setupResult.profile);
           }
+          
+          console.log("Navigating to dashboard...");
+          navigate("/dashboard");
         } else {
           console.error("Setup failed:", setupResult);
+          alert("Failed to save profile: " + (setupResult.error || "Unknown error"));
         }
       } else {
         console.log("Updating existing profile...");
-        await UserService.updateUserProfile(user.uid, { nickname, avatarURL });
-        alert("Avatar updated successfully!");
-        navigate("/dashboard");
+        const updateResult = await UserService.updateUserProfile(user.uid, { nickname, avatarURL });
+        
+        if (updateResult.success) {
+          alert("Avatar updated successfully!");
+          navigate("/dashboard");
+        } else {
+          alert("Failed to update avatar: " + (updateResult.error || "Unknown error"));
+        }
       }
     } catch (error) {
       console.error("Error saving avatar:", error);
