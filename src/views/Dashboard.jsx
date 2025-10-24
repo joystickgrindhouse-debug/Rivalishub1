@@ -139,13 +139,13 @@ const styles = {
     padding: "20px 10px",
   },
   rivalisTitle: {
-    fontSize: "48px",
+    fontSize: "clamp(32px, 8vw, 48px)",
     fontWeight: "900",
     color: "#fff",
-    letterSpacing: "12px",
+    letterSpacing: "clamp(4px, 2vw, 12px)",
     margin: "0 0 10px 0",
     fontFamily: "'Arial Black', 'Arial Bold', sans-serif",
-    wordWrap: "break-word",
+    whiteSpace: "nowrap",
     maxWidth: "100%",
   },
   mainTitle: {
