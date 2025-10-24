@@ -60,13 +60,6 @@ export default function Dashboard({ user }) {
   return (
     <div className="dashboard-background">
       <div style={styles.container}>
-        <div style={styles.header}>
-          <h1 style={styles.title}>Choose Your Game Mode</h1>
-          <p style={styles.subtitle}>
-            Select a challenge and out-train your rivals
-          </p>
-        </div>
-
         <div style={styles.tilesGrid}>
           {gameModes.map((mode) => (
             <div
