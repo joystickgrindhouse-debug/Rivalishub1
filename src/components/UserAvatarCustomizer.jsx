@@ -149,9 +149,8 @@ const UserAvatarCustomizer = ({ user: propUser, isFirstTimeSetup = false, onSetu
             if (onSetupComplete) {
               console.log("Calling onSetupComplete callback");
               onSetupComplete(profileResult.profile);
-            } else {
-              console.warn("No onSetupComplete callback provided!");
             }
+            navigate("/dashboard");
           } else {
             console.error("Failed to retrieve profile after save");
           }
