@@ -70,7 +70,16 @@ export default function App() {
   if (!user) return <Login />;
 
   if (!userProfile || !userProfile.hasCompletedSetup) {
-    return <AvatarCreator user={user} isFirstTimeSetup={true} onSetupComplete={(profile) => setUserProfile(profile)} />;
+    return (
+      <AvatarCreator 
+        user={user} 
+        isFirstTimeSetup={true} 
+        onSetupComplete={(profile) => {
+          console.log("Setup complete, updating profile:", profile);
+          setUserProfile(profile);
+        }} 
+      />
+    );
   }
 
   return (
