@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ChatService } from "../services/chatService.js";
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
 
 export default function GlobalChat({ user, userProfile }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const emojiPickerRef = useRef(null);
 
   useEffect(() => {
     if (!user) return;
@@ -35,6 +39,24 @@ export default function GlobalChat({ user, userProfile }) {
     }
   };
 
+  const onEmojiSelect = (emoji) => {
+    setInput(input + emoji.native);
+    setShowEmojiPicker(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="hero-background">
       <div className="overlay-card" style={{ width: "95%", height: "80vh", display: "flex", flexDirection: "column" }}>
@@ -58,15 +80,67 @@ export default function GlobalChat({ user, userProfile }) {
             </div>
           ))}
         </div>
-        <div style={{ display: "flex" }}>
-          <input 
-            style={{ flex: 1, padding: "0.5rem" }} 
+        <div style={{ position: "relative", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <textarea 
+            style={{ 
+              flex: 1, 
+              padding: "0.75rem", 
+              minHeight: "80px",
+              maxHeight: "120px",
+              resize: "vertical",
+              fontSize: "16px",
+              borderRadius: "8px",
+              border: "2px solid #ff4081"
+            }} 
             value={input} 
             onChange={e => setInput(e.target.value)} 
             onKeyPress={handleKeyPress}
             placeholder="Type a message..."
           />
-          <button onClick={sendMessage}>Send</button>
+          <button 
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            style={{
+              padding: "0.75rem",
+              fontSize: "24px",
+              background: "#667eea",
+              border: "none",
+              borderRadius: "8px",
+              cursor: "pointer",
+              height: "fit-content"
+            }}
+          >
+            😊
+          </button>
+          <button 
+            onClick={sendMessage}
+            style={{
+              padding: "0.75rem 1rem",
+              fontSize: "14px",
+              background: "#ff4081",
+              border: "none",
+              borderRadius: "8px",
+              cursor: "pointer",
+              color: "#fff",
+              fontWeight: "bold",
+              height: "fit-content"
+            }}
+          >
+            Send
+          </button>
+          {showEmojiPicker && (
+            <div 
+              ref={emojiPickerRef}
+              style={{
+                position: "absolute",
+                bottom: "100%",
+                right: "0",
+                marginBottom: "10px",
+                zIndex: 1000
+              }}
+            >
+              <Picker data={data} onEmojiSelect={onEmojiSelect} theme="dark" />
+            </div>
+          )}
         </div>
       </div>
     </div>

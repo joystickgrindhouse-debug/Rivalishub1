@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ChatService } from "../services/chatService.js";
 import { UserService } from "../services/userService.js";
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
 
 export default function DMChat({ user, userProfile }) {
   const [messages, setMessages] = useState([]);
@@ -10,6 +12,8 @@ export default function DMChat({ user, userProfile }) {
   const [searchResults, setSearchResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const emojiPickerRef = useRef(null);
 
   useEffect(() => {
     loadAllUsers();
@@ -83,6 +87,24 @@ export default function DMChat({ user, userProfile }) {
     setSearchResults([]);
     setShowDropdown(false);
   };
+
+  const onEmojiSelect = (emoji) => {
+    setInput(input + emoji.native);
+    setShowEmojiPicker(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="hero-background">
@@ -203,16 +225,72 @@ export default function DMChat({ user, userProfile }) {
             );
           })}
         </div>
-        <div style={{ display: "flex" }}>
-          <input 
-            style={{ flex: 1, padding: "0.5rem" }} 
+        <div style={{ position: "relative", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <textarea 
+            style={{ 
+              flex: 1, 
+              padding: "0.75rem", 
+              minHeight: "80px",
+              maxHeight: "120px",
+              resize: "vertical",
+              fontSize: "16px",
+              borderRadius: "8px",
+              border: "2px solid #ff4081"
+            }} 
             value={input} 
             onChange={e => setInput(e.target.value)} 
             onKeyPress={handleKeyPress}
             placeholder={recipientProfile ? "Type a message..." : "Select a recipient first..."}
             disabled={!recipientProfile}
           />
-          <button onClick={sendDM} disabled={!recipientProfile}>Send</button>
+          <button 
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            disabled={!recipientProfile}
+            style={{
+              padding: "0.75rem",
+              fontSize: "24px",
+              background: "#667eea",
+              border: "none",
+              borderRadius: "8px",
+              cursor: recipientProfile ? "pointer" : "not-allowed",
+              height: "fit-content",
+              opacity: recipientProfile ? 1 : 0.5
+            }}
+          >
+            😊
+          </button>
+          <button 
+            onClick={sendDM} 
+            disabled={!recipientProfile}
+            style={{
+              padding: "0.75rem 1rem",
+              fontSize: "14px",
+              background: "#ff4081",
+              border: "none",
+              borderRadius: "8px",
+              cursor: recipientProfile ? "pointer" : "not-allowed",
+              color: "#fff",
+              fontWeight: "bold",
+              height: "fit-content",
+              opacity: recipientProfile ? 1 : 0.5
+            }}
+          >
+            Send
+          </button>
+          {showEmojiPicker && (
+            <div 
+              ref={emojiPickerRef}
+              style={{
+                position: "absolute",
+                bottom: "100%",
+                right: "0",
+                marginBottom: "10px",
+                zIndex: 1000
+              }}
+            >
+              <Picker data={data} onEmojiSelect={onEmojiSelect} theme="dark" />
+            </div>
+          )}
         </div>
       </div>
     </div>

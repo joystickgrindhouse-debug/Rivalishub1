@@ -80,7 +80,10 @@ export default function Dashboard({ user }) {
     <div className="dashboard-background">
       <div style={styles.container}>
         <div style={styles.header}>
-          <h1 className="fitness-reimagined-flicker" style={styles.mainTitle}>
+          <h1 className="rivalis-text" style={styles.rivalisTitle}>
+            RIVALIS
+          </h1>
+          <h1 className="fitness-reimagined-breathing" style={styles.mainTitle}>
             FITNESS REIMAGINED
           </h1>
         </div>
@@ -100,20 +103,23 @@ export default function Dashboard({ user }) {
         </div>
       </div>
       <style>{`
-        @keyframes powerSurge {
-          0%, 100% { opacity: 1; text-shadow: 0 0 20px #ff4081, 0 0 40px #ff4081, 0 0 60px #ff4081; }
-          5% { opacity: 0.3; text-shadow: 0 0 5px #ff4081; }
-          10% { opacity: 1; text-shadow: 0 0 25px #ff4081, 0 0 45px #ff4081, 0 0 65px #ff4081; }
-          15% { opacity: 0.2; text-shadow: 0 0 3px #ff4081; }
-          20% { opacity: 1; text-shadow: 0 0 20px #ff4081, 0 0 40px #ff4081, 0 0 60px #ff4081; }
-          25% { opacity: 0.5; text-shadow: 0 0 10px #ff4081; }
-          30%, 95% { opacity: 1; text-shadow: 0 0 20px #ff4081, 0 0 40px #ff4081, 0 0 60px #ff4081; }
-          96% { opacity: 0.4; text-shadow: 0 0 8px #ff4081; }
-          98% { opacity: 1; text-shadow: 0 0 25px #ff4081, 0 0 45px #ff4081, 0 0 65px #ff4081; }
+        @keyframes breathing {
+          0%, 100% { 
+            transform: scale(1); 
+            text-shadow: 0 0 20px #ff4081, 0 0 40px #ff4081, 0 0 60px #ff4081; 
+          }
+          50% { 
+            transform: scale(1.05); 
+            text-shadow: 0 0 30px #ff4081, 0 0 60px #ff4081, 0 0 90px #ff4081; 
+          }
         }
         
-        .fitness-reimagined-flicker {
-          animation: powerSurge 4s infinite;
+        .fitness-reimagined-breathing {
+          animation: breathing 3s ease-in-out infinite;
+        }
+
+        .rivalis-text {
+          text-shadow: 0 0 15px #667eea, 0 0 30px #667eea, 0 0 45px #667eea;
         }
       `}</style>
     </div>
@@ -132,13 +138,26 @@ const styles = {
     marginBottom: "40px",
     padding: "20px 10px",
   },
-  mainTitle: {
-    fontSize: "72px",
+  rivalisTitle: {
+    fontSize: "48px",
     fontWeight: "900",
     color: "#fff",
-    letterSpacing: "8px",
+    letterSpacing: "12px",
+    margin: "0 0 10px 0",
+    fontFamily: "'Arial Black', 'Arial Bold', sans-serif",
+    wordWrap: "break-word",
+    maxWidth: "100%",
+  },
+  mainTitle: {
+    fontSize: "clamp(28px, 8vw, 72px)",
+    fontWeight: "900",
+    color: "#fff",
+    letterSpacing: "clamp(2px, 1vw, 8px)",
     margin: "0 0 20px 0",
     fontFamily: "'Arial Black', 'Arial Bold', sans-serif",
+    wordWrap: "break-word",
+    maxWidth: "100%",
+    lineHeight: "1.2",
   },
   title: {
     fontSize: "36px",
