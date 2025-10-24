@@ -138,38 +138,52 @@ const UserAvatarCustomizer = ({ user: propUser, isFirstTimeSetup = false, onSetu
       
       if (isFirstTimeSetup) {
         console.log("Completing first-time setup...");
-        const setupResult = await UserService.completeUserSetup(user.uid, nickname, avatarURL);
-        console.log("Setup result:", setupResult);
-        
-        if (setupResult.success) {
-          console.log("Profile saved successfully!");
-          alert("Profile created successfully! Welcome to Rivalis Hub!");
+        try {
+          const setupResult = await UserService.completeUserSetup(user.uid, nickname, avatarURL);
+          console.log("Setup result:", JSON.stringify(setupResult));
           
-          if (onSetupComplete && setupResult.profile) {
-            console.log("Calling onSetupComplete callback");
-            onSetupComplete(setupResult.profile);
+          if (setupResult.success) {
+            console.log("Profile saved successfully!");
+            alert("Profile created successfully! Welcome to Rivalis Hub!");
+            
+            if (onSetupComplete && setupResult.profile) {
+              console.log("Calling onSetupComplete callback");
+              try {
+                onSetupComplete(setupResult.profile);
+              } catch (callbackError) {
+                console.error("Error in onSetupComplete callback:", callbackError);
+              }
+            }
+            
+            console.log("Navigating to dashboard...");
+            navigate("/dashboard");
+          } else {
+            console.error("Setup failed:", setupResult.error);
+            alert("Failed to save profile: " + (setupResult.error || "Unknown error"));
           }
-          
-          console.log("Navigating to dashboard...");
-          navigate("/dashboard");
-        } else {
-          console.error("Setup failed:", setupResult);
-          alert("Failed to save profile: " + (setupResult.error || "Unknown error"));
+        } catch (setupError) {
+          console.error("Error during setup:", setupError);
+          alert("Failed to save profile: " + setupError.message);
         }
       } else {
         console.log("Updating existing profile...");
-        const updateResult = await UserService.updateUserProfile(user.uid, { nickname, avatarURL });
-        
-        if (updateResult.success) {
-          alert("Avatar updated successfully!");
-          navigate("/dashboard");
-        } else {
-          alert("Failed to update avatar: " + (updateResult.error || "Unknown error"));
+        try {
+          const updateResult = await UserService.updateUserProfile(user.uid, { nickname, avatarURL });
+          
+          if (updateResult.success) {
+            alert("Avatar updated successfully!");
+            navigate("/dashboard");
+          } else {
+            alert("Failed to update avatar: " + (updateResult.error || "Unknown error"));
+          }
+        } catch (updateError) {
+          console.error("Error during update:", updateError);
+          alert("Failed to update avatar: " + updateError.message);
         }
       }
     } catch (error) {
       console.error("Error saving avatar:", error);
-      alert("Failed to save. Please try again.");
+      alert("Failed to save: " + error.message);
     } finally {
       setSaving(false);
       console.log("=== SAVE COMPLETE ===");
