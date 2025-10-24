@@ -139,7 +139,13 @@ const UserAvatarCustomizer = ({ user: propUser, isFirstTimeSetup = false, onSetu
       if (isFirstTimeSetup) {
         console.log("Completing first-time setup...");
         try {
-          const setupResult = await UserService.completeUserSetup(user.uid, nickname, avatarURL);
+          const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error("Save timeout - please check your internet connection")), 10000);
+          });
+          
+          const setupPromise = UserService.completeUserSetup(user.uid, nickname, avatarURL);
+          const setupResult = await Promise.race([setupPromise, timeoutPromise]);
+          
           console.log("Setup result success:", setupResult.success);
           
           if (setupResult.success) {
