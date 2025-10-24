@@ -56,7 +56,7 @@ export default function Dashboard({ user }) {
   };
 
   return (
-    <div className="hero-background">
+    <div className="dashboard-background">
       <div style={styles.header}>
         <h1 style={styles.title}>Choose Your Game Mode</h1>
         <p style={styles.subtitle}>

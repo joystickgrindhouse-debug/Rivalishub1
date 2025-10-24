@@ -23,6 +23,22 @@ body, html {
   padding: 1rem;
 }
 
+.dashboard-background {
+  background-image: url('/assets/circuit-board.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  padding: 2rem 1rem;
+  overflow-y: auto;
+}
+
 .overlay-card {
   background-color: rgba(0, 0, 0, 0.6);
   padding: 1.5rem;
