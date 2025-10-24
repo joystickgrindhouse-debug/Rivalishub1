@@ -99,22 +99,36 @@ const UserAvatarCustomizer = ({ user: propUser, isFirstTimeSetup = false, onSetu
   }, [selectedStyle, seed, initialized, isDicebearAvatar]);
 
   const handleSaveAvatar = async () => {
-    if (!user) return;
+    console.log("=== SAVE AVATAR CLICKED ===");
+    console.log("User:", user);
+    console.log("Nickname:", nickname);
+    console.log("Avatar URL:", avatarURL);
+    console.log("Is first time setup:", isFirstTimeSetup);
+    
+    if (!user) {
+      console.error("No user found!");
+      return;
+    }
     
     const validation = NicknameService.validate(nickname);
+    console.log("Validation result:", validation);
     if (!validation.valid) {
       setNicknameError(validation.error);
+      console.error("Validation failed:", validation.error);
       return;
     }
     
     setNicknameError("");
     setSaving(true);
+    console.log("Starting save process...");
     
     try {
+      console.log("Updating Firebase Auth profile...");
       await updateProfile(user, {
         photoURL: avatarURL,
         displayName: nickname
       });
+      console.log("Firebase Auth profile updated successfully");
       
       const parsed = parseDicebearURL(avatarURL);
       if (parsed) {
@@ -122,17 +136,29 @@ const UserAvatarCustomizer = ({ user: propUser, isFirstTimeSetup = false, onSetu
       }
       
       if (isFirstTimeSetup) {
+        console.log("Completing first-time setup...");
         const setupResult = await UserService.completeUserSetup(user.uid, nickname, avatarURL);
+        console.log("Setup result:", setupResult);
         if (setupResult.success) {
           const profileResult = await UserService.getUserProfile(user.uid);
+          console.log("Profile fetch result:", profileResult);
           if (profileResult.success && profileResult.profile) {
+            console.log("Profile saved and retrieved successfully!");
             alert("Profile created successfully! Welcome to Rivalis Hub!");
             if (onSetupComplete) {
+              console.log("Calling onSetupComplete callback");
               onSetupComplete(profileResult.profile);
+            } else {
+              console.warn("No onSetupComplete callback provided!");
             }
+          } else {
+            console.error("Failed to retrieve profile after save");
           }
+        } else {
+          console.error("Setup failed:", setupResult);
         }
       } else {
+        console.log("Updating existing profile...");
         await UserService.updateUserProfile(user.uid, { nickname, avatarURL });
         alert("Avatar updated successfully!");
         navigate("/dashboard");
@@ -142,6 +168,7 @@ const UserAvatarCustomizer = ({ user: propUser, isFirstTimeSetup = false, onSetu
       alert("Failed to save. Please try again.");
     } finally {
       setSaving(false);
+      console.log("=== SAVE COMPLETE ===");
     }
   };
 
