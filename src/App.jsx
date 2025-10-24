@@ -25,19 +25,44 @@ export default function App() {
   const [checkingSetup, setCheckingSetup] = useState(true);
 
   useEffect(() => {
-    onAuthStateChanged(auth, async (currentUser) => {
+    const timeout = setTimeout(() => {
+      console.log("Loading timeout - forcing end of loading state");
+      setLoading(false);
+      setCheckingSetup(false);
+    }, 5000);
+
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      console.log("Auth state changed:", currentUser ? "User logged in" : "No user");
       setUser(currentUser);
       
       if (currentUser) {
-        const result = await UserService.getUserProfile(currentUser.uid);
-        if (result.success && result.profile) {
-          setUserProfile(result.profile);
+        console.log("Fetching user profile for:", currentUser.uid);
+        try {
+          const result = await UserService.getUserProfile(currentUser.uid);
+          console.log("Profile fetch result:", result);
+          if (result.success && result.profile) {
+            setUserProfile(result.profile);
+          } else {
+            console.log("No profile found or fetch failed, will show avatar creator");
+            setUserProfile(null);
+          }
+        } catch (error) {
+          console.error("Error fetching profile:", error);
+          setUserProfile(null);
         }
+      } else {
+        setUserProfile(null);
       }
       
+      clearTimeout(timeout);
       setLoading(false);
       setCheckingSetup(false);
     });
+
+    return () => {
+      unsubscribe();
+      clearTimeout(timeout);
+    };
   }, []);
 
   if (loading || checkingSetup) return <LoadingScreen />;
