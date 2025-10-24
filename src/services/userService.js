@@ -115,17 +115,22 @@ export const UserService = {
   async completeUserSetup(userId, nickname, avatarURL) {
     try {
       const userDocRef = doc(db, "users", userId);
+      
+      const existingDoc = await getDoc(userDocRef);
+      const existingData = existingDoc.exists() ? existingDoc.data() : {};
+      
       const userData = {
         userId,
         nickname,
         avatarURL,
         hasCompletedSetup: true,
-        createdAt: Timestamp.now(),
+        createdAt: existingData.createdAt || Timestamp.now(),
         updatedAt: Timestamp.now()
       };
 
-      await setDoc(userDocRef, userData, { merge: true });
-      return { success: true };
+      await setDoc(userDocRef, userData);
+      console.log("User setup completed and saved to Firebase:", userData);
+      return { success: true, profile: userData };
     } catch (error) {
       console.error("Error completing user setup:", error);
       return { success: false, error: error.message };

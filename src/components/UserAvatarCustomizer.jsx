@@ -120,15 +120,12 @@ const UserAvatarCustomizer = ({ user: propUser, isFirstTimeSetup = false, onSetu
       }
       
       if (isFirstTimeSetup) {
-        await UserService.completeUserSetup(user.uid, nickname, avatarURL);
-        const profile = {
-          userId: user.uid,
-          nickname,
-          avatarURL,
-          hasCompletedSetup: true
-        };
-        if (onSetupComplete) {
-          onSetupComplete(profile);
+        const setupResult = await UserService.completeUserSetup(user.uid, nickname, avatarURL);
+        if (setupResult.success) {
+          const profileResult = await UserService.getUserProfile(user.uid);
+          if (profileResult.success && profileResult.profile && onSetupComplete) {
+            onSetupComplete(profileResult.profile);
+          }
         }
       } else {
         await UserService.updateUserProfile(user.uid, { nickname, avatarURL });
