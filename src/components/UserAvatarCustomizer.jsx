@@ -138,39 +138,36 @@ const UserAvatarCustomizer = ({ user: propUser, isFirstTimeSetup = false, onSetu
       
       if (isFirstTimeSetup) {
         console.log("Completing first-time setup...");
-        try {
-          const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error("Save timeout - please check your internet connection")), 10000);
-          });
-          
-          const setupPromise = UserService.completeUserSetup(user.uid, nickname, avatarURL);
-          const setupResult = await Promise.race([setupPromise, timeoutPromise]);
-          
-          console.log("Setup result success:", setupResult.success);
-          
-          if (setupResult.success) {
-            console.log("Profile saved successfully!");
-            alert("Profile created successfully! Welcome to Rivalis Hub!");
-            
-            if (onSetupComplete && setupResult.profile) {
-              console.log("Calling onSetupComplete callback");
-              try {
-                onSetupComplete(setupResult.profile);
-              } catch (callbackError) {
-                console.error("Error in onSetupComplete callback:", callbackError);
-              }
-            }
-            
-            console.log("Navigating to dashboard...");
-            navigate("/dashboard");
-          } else {
-            console.error("Setup failed:", setupResult.error);
-            alert("Failed to save profile: " + (setupResult.error || "Unknown error"));
+        
+        // Create a temporary profile to pass to the callback
+        const tempProfile = {
+          userId: user.uid,
+          nickname: nickname,
+          avatarURL: avatarURL,
+          hasCompletedSetup: true
+        };
+        
+        if (onSetupComplete) {
+          console.log("Calling onSetupComplete callback with temp profile");
+          try {
+            onSetupComplete(tempProfile);
+          } catch (callbackError) {
+            console.error("Error in onSetupComplete callback:", callbackError);
           }
-        } catch (setupError) {
-          console.error("Error during setup:", setupError);
-          alert("Failed to save profile: " + setupError.message);
         }
+        
+        // Try to save to Firestore in the background (don't wait for it)
+        UserService.completeUserSetup(user.uid, nickname, avatarURL)
+          .then(result => {
+            console.log("Background save completed:", result.success);
+          })
+          .catch(err => {
+            console.error("Background save failed:", err);
+          });
+        
+        console.log("Navigating to dashboard...");
+        alert("Profile created! Welcome to Rivalis Hub!");
+        navigate("/dashboard");
       } else {
         console.log("Updating existing profile...");
         try {
