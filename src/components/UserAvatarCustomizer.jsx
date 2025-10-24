@@ -126,11 +126,10 @@ const UserAvatarCustomizer = ({ user: propUser, isFirstTimeSetup = false, onSetu
         if (setupResult.success) {
           const profileResult = await UserService.getUserProfile(user.uid);
           if (profileResult.success && profileResult.profile) {
+            alert("Profile created successfully! Welcome to Rivalis Hub!");
             if (onSetupComplete) {
               onSetupComplete(profileResult.profile);
             }
-            alert("Profile created successfully! Welcome to Rivalis Hub!");
-            navigate("/dashboard");
           }
         }
       } else {
