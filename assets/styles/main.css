@@ -74,15 +74,26 @@ button:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  background-color: rgba(0,0,0,0.7);
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, rgba(20, 20, 30, 0.95) 0%, rgba(40, 10, 20, 0.95) 100%);
+  border-bottom: 2px solid rgba(255, 50, 80, 0.3);
+  box-shadow: 0 4px 20px rgba(255, 0, 0, 0.2);
   color: #fff;
   position: relative;
+  backdrop-filter: blur(10px);
 }
 
 .logo {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: bold;
+  color: #ff3050;
+  text-shadow: 
+    0 0 10px rgba(255, 48, 80, 0.8),
+    0 0 20px rgba(255, 48, 80, 0.6),
+    0 0 30px rgba(255, 48, 80, 0.4),
+    0 0 40px rgba(255, 48, 80, 0.2);
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
 .nav-right {
@@ -99,25 +110,54 @@ button:hover {
   position: absolute;
   top: 100%;
   right: 0;
-  background-color: rgba(0,0,0,0.9);
+  background: linear-gradient(135deg, rgba(20, 20, 30, 0.98) 0%, rgba(40, 10, 20, 0.98) 100%);
   padding: 1rem;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  min-width: 150px;
+  min-width: 180px;
   z-index: 1000;
+  border: 1px solid rgba(255, 50, 80, 0.3);
+  box-shadow: 0 8px 24px rgba(255, 0, 0, 0.3);
 }
 
 .dropdown a {
   color: #fff;
   text-decoration: none;
   padding: 0.5rem;
+  transition: all 0.3s ease;
 }
 
 .dropdown a:hover {
-  background-color: rgba(255,255,255,0.1);
+  background: linear-gradient(90deg, rgba(255, 50, 80, 0.2) 0%, rgba(255, 50, 80, 0.05) 100%);
   border-radius: 4px;
+  border-left: 3px solid #ff3050;
+  padding-left: 0.7rem;
+}
+
+.dropdown button {
+  background: linear-gradient(135deg, #ff3050 0%, #cc0033 100%);
+  margin-top: 0.5rem;
+}
+
+.dropdown button:hover {
+  background: linear-gradient(135deg, #ff4060 0%, #dd1144 100%);
+  box-shadow: 0 4px 12px rgba(255, 48, 80, 0.4);
+}
+
+.menu button {
+  background: linear-gradient(135deg, #ff3050 0%, #cc0033 100%);
+  border: 1px solid rgba(255, 50, 80, 0.5);
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.menu button:hover {
+  background: linear-gradient(135deg, #ff4060 0%, #dd1144 100%);
+  box-shadow: 0 0 15px rgba(255, 48, 80, 0.5);
+  transform: translateY(-2px);
 }
 
 .dashboard-grid {
