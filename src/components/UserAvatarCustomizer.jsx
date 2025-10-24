@@ -115,6 +115,7 @@ const UserAvatarCustomizer = ({ user: propUser, isFirstTimeSetup = false, onSetu
     if (!validation.valid) {
       setNicknameError(validation.error);
       console.error("Validation failed:", validation.error);
+      alert("Invalid nickname: " + validation.error);
       return;
     }
     
@@ -205,6 +206,7 @@ const UserAvatarCustomizer = ({ user: propUser, isFirstTimeSetup = false, onSetu
       <div style={styles.customizeSection}>
         <div style={styles.nicknameSection}>
           <label style={styles.label}>Nickname</label>
+          <div style={styles.hint}>Only letters, numbers, and underscores (no spaces). 3-20 characters.</div>
           <div style={styles.nicknameInputGroup}>
             <input
               type="text"
@@ -214,13 +216,13 @@ const UserAvatarCustomizer = ({ user: propUser, isFirstTimeSetup = false, onSetu
                 setNicknameError("");
               }}
               placeholder="Enter your nickname"
-              style={{...styles.input, marginBottom: 0}}
+              style={{...styles.input, marginBottom: 0, borderColor: nicknameError ? '#ff4081' : 'rgba(255, 255, 255, 0.1)'}}
             />
             <button onClick={generateRandomNickname} style={styles.generateButton}>
               🎲 Generate
             </button>
           </div>
-          {nicknameError && <div style={styles.error}>{nicknameError}</div>}
+          {nicknameError && <div style={styles.error}>❌ {nicknameError}</div>}
         </div>
 
         <h3 style={styles.heading}>Choose Style</h3>
@@ -319,11 +321,21 @@ const styles = {
     whiteSpace: "nowrap",
     transition: "transform 0.2s, box-shadow 0.2s",
   },
+  hint: {
+    color: "rgba(255, 255, 255, 0.5)",
+    fontSize: "11px",
+    marginBottom: "8px",
+    fontStyle: "italic",
+  },
   error: {
     color: "#ff4081",
-    fontSize: "12px",
+    fontSize: "14px",
     marginTop: "8px",
-    fontWeight: "500",
+    fontWeight: "600",
+    padding: "8px",
+    background: "rgba(255, 64, 129, 0.1)",
+    borderRadius: "6px",
+    border: "1px solid #ff4081",
   },
   heading: {
     fontSize: "20px",
