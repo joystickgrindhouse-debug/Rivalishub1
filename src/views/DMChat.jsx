@@ -225,17 +225,18 @@ export default function DMChat({ user, userProfile }) {
             );
           })}
         </div>
-        <div style={{ position: "relative", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
           <textarea 
             style={{ 
-              flex: 1, 
+              width: "100%",
               padding: "0.75rem", 
               minHeight: "80px",
               maxHeight: "120px",
               resize: "vertical",
               fontSize: "16px",
               borderRadius: "8px",
-              border: "2px solid #ff4081"
+              border: "2px solid #ff4081",
+              boxSizing: "border-box"
             }} 
             value={input} 
             onChange={e => setInput(e.target.value)} 
@@ -243,47 +244,48 @@ export default function DMChat({ user, userProfile }) {
             placeholder={recipientProfile ? "Type a message..." : "Select a recipient first..."}
             disabled={!recipientProfile}
           />
-          <button 
-            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            disabled={!recipientProfile}
-            style={{
-              padding: "0.75rem",
-              fontSize: "24px",
-              background: "#667eea",
-              border: "none",
-              borderRadius: "8px",
-              cursor: recipientProfile ? "pointer" : "not-allowed",
-              height: "fit-content",
-              opacity: recipientProfile ? 1 : 0.5
-            }}
-          >
-            😊
-          </button>
-          <button 
-            onClick={sendDM} 
-            disabled={!recipientProfile}
-            style={{
-              padding: "0.75rem 1rem",
-              fontSize: "14px",
-              background: "#ff4081",
-              border: "none",
-              borderRadius: "8px",
-              cursor: recipientProfile ? "pointer" : "not-allowed",
-              color: "#fff",
-              fontWeight: "bold",
-              height: "fit-content",
-              opacity: recipientProfile ? 1 : 0.5
-            }}
-          >
-            Send
-          </button>
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            <button 
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              disabled={!recipientProfile}
+              style={{
+                padding: "0.75rem",
+                fontSize: "24px",
+                background: "#667eea",
+                border: "none",
+                borderRadius: "8px",
+                cursor: recipientProfile ? "pointer" : "not-allowed",
+                opacity: recipientProfile ? 1 : 0.5
+              }}
+            >
+              😊
+            </button>
+            <button 
+              onClick={sendDM} 
+              disabled={!recipientProfile}
+              style={{
+                flex: 1,
+                padding: "0.75rem 1rem",
+                fontSize: "14px",
+                background: "#ff4081",
+                border: "none",
+                borderRadius: "8px",
+                cursor: recipientProfile ? "pointer" : "not-allowed",
+                color: "#fff",
+                fontWeight: "bold",
+                opacity: recipientProfile ? 1 : 0.5
+              }}
+            >
+              Send
+            </button>
+          </div>
           {showEmojiPicker && (
             <div 
               ref={emojiPickerRef}
               style={{
                 position: "absolute",
                 bottom: "100%",
-                right: "0",
+                left: "0",
                 marginBottom: "10px",
                 zIndex: 1000
               }}
