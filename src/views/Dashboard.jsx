@@ -55,34 +55,44 @@ export default function Dashboard({ user }) {
     }
   };
 
+  console.log("Dashboard rendering with", gameModes.length, "game modes:", gameModes.map(m => m.name));
+
   return (
     <div className="dashboard-background">
-      <div style={styles.header}>
-        <h1 style={styles.title}>Choose Your Game Mode</h1>
-        <p style={styles.subtitle}>
-          Select a challenge and out-train your rivals
-        </p>
-      </div>
+      <div style={styles.container}>
+        <div style={styles.header}>
+          <h1 style={styles.title}>Choose Your Game Mode</h1>
+          <p style={styles.subtitle}>
+            Select a challenge and out-train your rivals
+          </p>
+        </div>
 
-      <div style={styles.tilesGrid}>
-        {gameModes.map((mode) => (
-          <div
-            key={mode.id}
-            onClick={() => handleTileClick(mode)}
-            style={styles.tile}
-          >
-            <img src={mode.image} alt={mode.name} style={styles.tileImage} />
-            <div style={styles.tileOverlay}>
-              <h2 style={styles.tileName}>{mode.name}</h2>
+        <div style={styles.tilesGrid}>
+          {gameModes.map((mode) => (
+            <div
+              key={mode.id}
+              onClick={() => handleTileClick(mode)}
+              style={styles.tile}
+            >
+              <img src={mode.image} alt={mode.name} style={styles.tileImage} />
+              <div style={styles.tileOverlay}>
+                <h2 style={styles.tileName}>{mode.name}</h2>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
 }
 
 const styles = {
+  container: {
+    width: "100%",
+    maxWidth: "1400px",
+    margin: "0 auto",
+    padding: "20px",
+  },
   header: {
     textAlign: "center",
     marginBottom: "40px",
@@ -103,11 +113,10 @@ const styles = {
   },
   tilesGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-    gap: "20px",
-    maxWidth: "1200px",
-    margin: "0 auto",
-    padding: "0 10px",
+    gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+    gap: "24px",
+    width: "100%",
+    padding: "0 10px 40px 10px",
   },
   tile: {
     position: "relative",
