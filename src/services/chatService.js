@@ -8,10 +8,38 @@ import {
   getDocs,
   where,
   Timestamp,
-  onSnapshot
+  onSnapshot,
+  deleteDoc,
+  doc
 } from "firebase/firestore";
 
 export const ChatService = {
+  async cleanupOldGlobalMessages() {
+    try {
+      const q = query(
+        collection(db, "globalChat"),
+        orderBy("timestamp", "desc")
+      );
+      
+      const snapshot = await getDocs(q);
+      const allMessages = [];
+      snapshot.forEach((doc) => {
+        allMessages.push({ id: doc.id, ...doc.data() });
+      });
+      
+      if (allMessages.length > 50) {
+        const messagesToDelete = allMessages.slice(50);
+        const deletePromises = messagesToDelete.map(msg => 
+          deleteDoc(doc(db, "globalChat", msg.id))
+        );
+        await Promise.all(deletePromises);
+        console.log(`Cleaned up ${messagesToDelete.length} old messages`);
+      }
+    } catch (error) {
+      console.error("Error cleaning up old messages:", error);
+    }
+  },
+
   async sendGlobalMessage({ userId, nickname, avatarURL, text }) {
     try {
       const messageData = {
@@ -24,6 +52,10 @@ export const ChatService = {
       };
 
       const docRef = await addDoc(collection(db, "globalChat"), messageData);
+      
+      // Cleanup old messages after sending (keeps only last 50)
+      this.cleanupOldGlobalMessages();
+      
       return { success: true, id: docRef.id };
     } catch (error) {
       console.error("Error sending global message:", error);
