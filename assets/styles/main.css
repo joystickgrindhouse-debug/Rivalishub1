@@ -95,6 +95,7 @@ button:hover {
   box-shadow: 0 4px 20px rgba(255, 0, 0, 0.2);
   color: #fff;
   position: relative;
+  z-index: 10000;
 }
 
 .logo {
@@ -132,7 +133,7 @@ button:hover {
   flex-direction: column;
   gap: 0.5rem;
   min-width: 180px;
-  z-index: 1000;
+  z-index: 9999;
   border: 1px solid #ff3050;
   box-shadow: 
     0 0 15px rgba(255, 48, 80, 0.5),
