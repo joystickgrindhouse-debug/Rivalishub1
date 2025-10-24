@@ -3,11 +3,41 @@ import UserAvatarCustomizer from "../components/UserAvatarCustomizer";
 
 export default function AvatarCreator({ user }) {
   return (
-    <div className="hero-background">
-      <div className="overlay-card">
-        <h2>{user.email}'s Profile</h2>
-        <UserAvatarCustomizer />
+    <div style={styles.container}>
+      <div style={styles.header}>
+        <h1 style={styles.title}>Create Your Avatar</h1>
+        <p style={styles.subtitle}>
+          Choose a style and customize your unique avatar
+        </p>
       </div>
+      <UserAvatarCustomizer />
     </div>
   );
 }
+
+const styles = {
+  container: {
+    minHeight: "100vh",
+    background: "linear-gradient(135deg, #1e1e2e 0%, #2d1b3d 100%)",
+    padding: "20px 10px",
+    boxSizing: "border-box",
+  },
+  header: {
+    textAlign: "center",
+    marginBottom: "30px",
+    padding: "0 10px",
+  },
+  title: {
+    fontSize: "32px",
+    fontWeight: "800",
+    background: "linear-gradient(135deg, #667eea 0%, #ff4081 100%)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    marginBottom: "10px",
+  },
+  subtitle: {
+    fontSize: "16px",
+    color: "rgba(255, 255, 255, 0.7)",
+    fontWeight: "400",
+  },
+};
