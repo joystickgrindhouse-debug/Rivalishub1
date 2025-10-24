@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { updateProfile } from "firebase/auth";
 import { UserService } from "../services/userService";
@@ -43,6 +44,7 @@ const parseDicebearURL = (url) => {
 };
 
 const UserAvatarCustomizer = ({ user: propUser, isFirstTimeSetup = false, onSetupComplete, userProfile }) => {
+  const navigate = useNavigate();
   const [user, setUser] = useState(propUser || null);
   const [selectedStyle, setSelectedStyle] = useState("adventurer");
   const [seed, setSeed] = useState("");
@@ -123,15 +125,19 @@ const UserAvatarCustomizer = ({ user: propUser, isFirstTimeSetup = false, onSetu
         const setupResult = await UserService.completeUserSetup(user.uid, nickname, avatarURL);
         if (setupResult.success) {
           const profileResult = await UserService.getUserProfile(user.uid);
-          if (profileResult.success && profileResult.profile && onSetupComplete) {
-            onSetupComplete(profileResult.profile);
+          if (profileResult.success && profileResult.profile) {
+            if (onSetupComplete) {
+              onSetupComplete(profileResult.profile);
+            }
+            alert("Profile created successfully! Welcome to Rivalis Hub!");
+            navigate("/dashboard");
           }
         }
       } else {
         await UserService.updateUserProfile(user.uid, { nickname, avatarURL });
+        alert("Avatar updated successfully!");
+        navigate("/dashboard");
       }
-      
-      alert(isFirstTimeSetup ? "Profile created successfully! Welcome to Rivalis Hub!" : "Avatar updated successfully!");
     } catch (error) {
       console.error("Error saving avatar:", error);
       alert("Failed to save. Please try again.");
