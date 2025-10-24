@@ -19,11 +19,12 @@ export default function Navbar({ user }) {
           <button onClick={() => setOpen(!open)}>Menu</button>
           {open && (
             <div className="dropdown">
+              <Link to="/dashboard">Home</Link>
+              <Link to="/profile">Profile</Link>
               <Link to="/chat">Chat</Link>
               <Link to="/dm">DM</Link>
               <Link to="/leaderboard">Leaderboard</Link>
               <Link to="/achievements">Achievements</Link>
-              <Link to="/dashboard">Avatar</Link>
               <button onClick={handleLogout}>Logout</button>
             </div>
           )}
