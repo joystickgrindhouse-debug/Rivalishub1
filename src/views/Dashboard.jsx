@@ -11,8 +11,8 @@ const gameModes = [
     id: "solo",
     name: "Solo",
     image: soloImage,
-    link: "https://solorivalis.netlify.app",
-    external: true,
+    link: "/solo",
+    external: false,
   },
   {
     id: "burnouts",
@@ -79,6 +79,11 @@ export default function Dashboard({ user }) {
   return (
     <div className="dashboard-background">
       <div style={styles.container}>
+        <div style={styles.header}>
+          <h1 className="fitness-reimagined-flicker" style={styles.mainTitle}>
+            FITNESS REIMAGINED
+          </h1>
+        </div>
         <div style={styles.tilesGrid}>
           {gameModes.map((mode) => (
             <div
@@ -94,6 +99,23 @@ export default function Dashboard({ user }) {
           ))}
         </div>
       </div>
+      <style>{`
+        @keyframes powerSurge {
+          0%, 100% { opacity: 1; text-shadow: 0 0 20px #ff4081, 0 0 40px #ff4081, 0 0 60px #ff4081; }
+          5% { opacity: 0.3; text-shadow: 0 0 5px #ff4081; }
+          10% { opacity: 1; text-shadow: 0 0 25px #ff4081, 0 0 45px #ff4081, 0 0 65px #ff4081; }
+          15% { opacity: 0.2; text-shadow: 0 0 3px #ff4081; }
+          20% { opacity: 1; text-shadow: 0 0 20px #ff4081, 0 0 40px #ff4081, 0 0 60px #ff4081; }
+          25% { opacity: 0.5; text-shadow: 0 0 10px #ff4081; }
+          30%, 95% { opacity: 1; text-shadow: 0 0 20px #ff4081, 0 0 40px #ff4081, 0 0 60px #ff4081; }
+          96% { opacity: 0.4; text-shadow: 0 0 8px #ff4081; }
+          98% { opacity: 1; text-shadow: 0 0 25px #ff4081, 0 0 45px #ff4081, 0 0 65px #ff4081; }
+        }
+        
+        .fitness-reimagined-flicker {
+          animation: powerSurge 4s infinite;
+        }
+      `}</style>
     </div>
   );
 }
@@ -109,6 +131,14 @@ const styles = {
     textAlign: "center",
     marginBottom: "40px",
     padding: "20px 10px",
+  },
+  mainTitle: {
+    fontSize: "72px",
+    fontWeight: "900",
+    color: "#fff",
+    letterSpacing: "8px",
+    margin: "0 0 20px 0",
+    fontFamily: "'Arial Black', 'Arial Bold', sans-serif",
   },
   title: {
     fontSize: "36px",

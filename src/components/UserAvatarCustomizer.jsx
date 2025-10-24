@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { auth } from "../firebase";
 import { updateProfile } from "firebase/auth";
+import { UserService } from "../services/userService";
+import { NicknameService } from "../services/nicknameService";
 
 const avatarStyles = [
   { id: "adventurer", name: "Adventurer", desc: "Illustrated characters" },
@@ -40,19 +42,27 @@ const parseDicebearURL = (url) => {
   }
 };
 
-const UserAvatarCustomizer = () => {
-  const [user, setUser] = useState(null);
+const UserAvatarCustomizer = ({ user: propUser, isFirstTimeSetup = false, onSetupComplete, userProfile }) => {
+  const [user, setUser] = useState(propUser || null);
   const [selectedStyle, setSelectedStyle] = useState("adventurer");
   const [seed, setSeed] = useState("");
   const [avatarURL, setAvatarURL] = useState("");
+  const [nickname, setNickname] = useState("");
   const [saving, setSaving] = useState(false);
   const [isDicebearAvatar, setIsDicebearAvatar] = useState(true);
   const [initialized, setInitialized] = useState(false);
+  const [nicknameError, setNicknameError] = useState("");
 
   useEffect(() => {
-    const currentUser = auth.currentUser;
+    const currentUser = propUser || auth.currentUser;
     if (!currentUser) return;
     setUser(currentUser);
+    
+    if (userProfile && userProfile.nickname) {
+      setNickname(userProfile.nickname);
+    } else if (isFirstTimeSetup) {
+      setNickname(NicknameService.generate());
+    }
     
     if (currentUser.photoURL) {
       const parsed = parseDicebearURL(currentUser.photoURL);
@@ -77,7 +87,7 @@ const UserAvatarCustomizer = () => {
     }
     
     setInitialized(true);
-  }, []);
+  }, [propUser, userProfile, isFirstTimeSetup]);
 
   useEffect(() => {
     if (initialized && isDicebearAvatar && seed) {
@@ -88,11 +98,20 @@ const UserAvatarCustomizer = () => {
 
   const handleSaveAvatar = async () => {
     if (!user) return;
+    
+    const validation = NicknameService.validate(nickname);
+    if (!validation.valid) {
+      setNicknameError(validation.error);
+      return;
+    }
+    
+    setNicknameError("");
     setSaving(true);
     
     try {
       await updateProfile(user, {
-        photoURL: avatarURL
+        photoURL: avatarURL,
+        displayName: nickname
       });
       
       const parsed = parseDicebearURL(avatarURL);
@@ -100,13 +119,34 @@ const UserAvatarCustomizer = () => {
         setIsDicebearAvatar(true);
       }
       
-      alert("Avatar saved successfully!");
+      if (isFirstTimeSetup) {
+        await UserService.completeUserSetup(user.uid, nickname, avatarURL);
+        const profile = {
+          userId: user.uid,
+          nickname,
+          avatarURL,
+          hasCompletedSetup: true
+        };
+        if (onSetupComplete) {
+          onSetupComplete(profile);
+        }
+      } else {
+        await UserService.updateUserProfile(user.uid, { nickname, avatarURL });
+      }
+      
+      alert(isFirstTimeSetup ? "Profile created successfully! Welcome to Rivalis Hub!" : "Avatar updated successfully!");
     } catch (error) {
       console.error("Error saving avatar:", error);
-      alert("Failed to save avatar. Please try again.");
+      alert("Failed to save. Please try again.");
     } finally {
       setSaving(false);
     }
+  };
+
+  const generateRandomNickname = () => {
+    const newNickname = NicknameService.generate();
+    setNickname(newNickname);
+    setNicknameError("");
   };
 
   const randomizeSeed = () => {
@@ -134,6 +174,26 @@ const UserAvatarCustomizer = () => {
       </div>
 
       <div style={styles.customizeSection}>
+        <div style={styles.nicknameSection}>
+          <label style={styles.label}>Nickname</label>
+          <div style={styles.nicknameInputGroup}>
+            <input
+              type="text"
+              value={nickname}
+              onChange={(e) => {
+                setNickname(e.target.value);
+                setNicknameError("");
+              }}
+              placeholder="Enter your nickname"
+              style={{...styles.input, marginBottom: 0}}
+            />
+            <button onClick={generateRandomNickname} style={styles.generateButton}>
+              🎲 Generate
+            </button>
+          </div>
+          {nicknameError && <div style={styles.error}>{nicknameError}</div>}
+        </div>
+
         <h3 style={styles.heading}>Choose Style</h3>
         <div style={styles.stylesGrid}>
           {avatarStyles.map((style) => (
@@ -208,6 +268,33 @@ const styles = {
   customizeSection: {
     width: "100%",
     boxSizing: "border-box",
+  },
+  nicknameSection: {
+    marginBottom: "20px",
+    width: "100%",
+  },
+  nicknameInputGroup: {
+    display: "flex",
+    gap: "10px",
+    alignItems: "center",
+  },
+  generateButton: {
+    padding: "12px 16px",
+    fontSize: "14px",
+    fontWeight: "600",
+    border: "none",
+    borderRadius: "8px",
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    color: "#fff",
+    cursor: "pointer",
+    whiteSpace: "nowrap",
+    transition: "transform 0.2s, box-shadow 0.2s",
+  },
+  error: {
+    color: "#ff4081",
+    fontSize: "12px",
+    marginTop: "8px",
+    fontWeight: "500",
   },
   heading: {
     fontSize: "20px",

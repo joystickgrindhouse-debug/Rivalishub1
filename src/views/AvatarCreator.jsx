@@ -1,16 +1,25 @@
 import React from "react";
 import UserAvatarCustomizer from "../components/UserAvatarCustomizer";
 
-export default function AvatarCreator({ user }) {
+export default function AvatarCreator({ user, isFirstTimeSetup = false, onSetupComplete, userProfile }) {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <h1 style={styles.title}>Create Your Avatar</h1>
+        <h1 style={styles.title}>
+          {isFirstTimeSetup ? "Welcome! Create Your Profile" : "Edit Your Avatar"}
+        </h1>
         <p style={styles.subtitle}>
-          Choose a style and customize your unique avatar
+          {isFirstTimeSetup 
+            ? "Choose a nickname and customize your avatar to get started" 
+            : "Update your avatar style and appearance"}
         </p>
       </div>
-      <UserAvatarCustomizer />
+      <UserAvatarCustomizer 
+        user={user} 
+        isFirstTimeSetup={isFirstTimeSetup} 
+        onSetupComplete={onSetupComplete}
+        userProfile={userProfile}
+      />
     </div>
   );
 }
