@@ -125,16 +125,16 @@ button:hover {
 }
 
 .dropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
+  position: fixed;
+  top: 70px;
+  right: 1rem;
   background: #000000;
   padding: 1rem;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  min-width: 180px;
+  width: 180px;
   max-width: calc(100vw - 2rem);
   z-index: 9999;
   border: 1px solid #ff3050;
@@ -142,7 +142,6 @@ button:hover {
     0 0 15px rgba(255, 48, 80, 0.5),
     0 0 30px rgba(255, 48, 80, 0.3),
     inset 0 0 20px rgba(255, 48, 80, 0.05);
-  margin-right: -1rem;
 }
 
 .dropdown a {
