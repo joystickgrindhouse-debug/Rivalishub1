@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChatService } from "../services/chatService.js";
-import data from '@emoji-mart/data';
-import Picker from '@emoji-mart/react';
+import CustomEmojiPicker from "../components/CustomEmojiPicker.jsx";
 
 export default function GlobalChat({ user, userProfile }) {
   const [messages, setMessages] = useState([]);
@@ -40,7 +39,7 @@ export default function GlobalChat({ user, userProfile }) {
   };
 
   const onEmojiSelect = (emoji) => {
-    setInput(input + emoji.native);
+    setInput(input + emoji);
     setShowEmojiPicker(false);
   };
 
@@ -59,26 +58,74 @@ export default function GlobalChat({ user, userProfile }) {
 
   return (
     <div className="hero-background">
-      <div className="overlay-card" style={{ width: "95%", height: "80vh", display: "flex", flexDirection: "column" }}>
-        <h2>Global Chat</h2>
-        <div style={{ flex: 1, overflowY: "auto", marginBottom: "1rem", border: "1px solid #fff", padding: "0.5rem", display: "flex", flexDirection: "column", gap: "0.5rem", background: "rgba(0, 0, 0, 0.3)" }}>
+      <div style={{ 
+        width: "95%", 
+        maxWidth: "800px",
+        height: "80vh", 
+        display: "flex", 
+        flexDirection: "column",
+        background: "#000000",
+        border: "2px solid #ff3050",
+        borderRadius: "12px",
+        padding: "1.5rem",
+        boxShadow: "0 0 30px rgba(255, 48, 80, 0.5), inset 0 0 20px rgba(255, 48, 80, 0.05)"
+      }}>
+        <h2 style={{ 
+          color: "#ff3050",
+          textShadow: "0 0 15px rgba(255, 48, 80, 0.8)",
+          marginBottom: "1rem",
+          textTransform: "uppercase",
+          letterSpacing: "2px"
+        }}>
+          🔥 Global Chat
+        </h2>
+        <div style={{ 
+          flex: 1, 
+          overflowY: "auto", 
+          marginBottom: "1rem", 
+          border: "1px solid rgba(255, 48, 80, 0.3)", 
+          padding: "0.5rem", 
+          display: "flex", 
+          flexDirection: "column", 
+          gap: "0.5rem", 
+          background: "rgba(0, 0, 0, 0.5)",
+          borderRadius: "8px",
+          boxShadow: "inset 0 0 15px rgba(255, 48, 80, 0.1)"
+        }}>
           {messages.length === 0 ? (
-            <div style={{ textAlign: "center", color: "rgba(255, 255, 255, 0.5)", padding: "2rem" }}>
+            <div style={{ textAlign: "center", color: "rgba(255, 48, 80, 0.5)", padding: "2rem" }}>
               No messages yet. Be the first to send a message!
             </div>
           ) : (
             messages.map((m) => (
-              <div key={m.id} style={{ display: "flex", gap: "0.5rem", alignItems: "flex-start", padding: "0.5rem", background: "rgba(255, 255, 255, 0.05)", borderRadius: "8px" }}>
+              <div key={m.id} style={{ 
+                display: "flex", 
+                gap: "0.5rem", 
+                alignItems: "flex-start", 
+                padding: "0.75rem", 
+                background: "rgba(255, 48, 80, 0.05)", 
+                borderRadius: "8px",
+                border: "1px solid rgba(255, 48, 80, 0.2)",
+                transition: "all 0.2s"
+              }}>
                 {m.avatarURL && (
                   <img 
                     src={m.avatarURL} 
                     alt={m.nickname} 
-                    style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#fff" }}
+                    style={{ 
+                      width: "32px", 
+                      height: "32px", 
+                      borderRadius: "50%", 
+                      background: "#fff",
+                      border: "2px solid #ff3050"
+                    }}
                   />
                 )}
                 <div style={{ flex: 1 }}>
                   <div>
-                    <strong style={{ color: "#ff4081" }}>{m.nickname}:</strong>{" "}
+                    <strong style={{ color: "#ff3050", textShadow: "0 0 8px rgba(255, 48, 80, 0.6)" }}>
+                      {m.nickname}:
+                    </strong>{" "}
                     <span style={{ color: "#fff" }}>{m.text}</span>
                   </div>
                 </div>
@@ -96,8 +143,11 @@ export default function GlobalChat({ user, userProfile }) {
               resize: "vertical",
               fontSize: "16px",
               borderRadius: "8px",
-              border: "2px solid #ff4081",
-              boxSizing: "border-box"
+              border: "2px solid #ff3050",
+              boxSizing: "border-box",
+              background: "#000000",
+              color: "#fff",
+              boxShadow: "0 0 15px rgba(255, 48, 80, 0.3), inset 0 0 10px rgba(255, 48, 80, 0.05)"
             }} 
             value={input} 
             onChange={e => setInput(e.target.value)} 
@@ -108,31 +158,55 @@ export default function GlobalChat({ user, userProfile }) {
             <button 
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
               style={{
-                padding: "0.75rem",
-                fontSize: "24px",
-                background: "#667eea",
-                border: "none",
+                padding: "0.75rem 1rem",
+                fontSize: "18px",
+                background: "#000000",
+                border: "2px solid #ff3050",
                 borderRadius: "8px",
-                cursor: "pointer"
+                cursor: "pointer",
+                color: "#ff3050",
+                fontWeight: "bold",
+                boxShadow: "0 0 15px rgba(255, 48, 80, 0.5)",
+                transition: "all 0.2s"
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(255, 48, 80, 0.2)";
+                e.currentTarget.style.boxShadow = "0 0 20px rgba(255, 48, 80, 0.8)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "#000000";
+                e.currentTarget.style.boxShadow = "0 0 15px rgba(255, 48, 80, 0.5)";
               }}
             >
-              😊
+              🎮
             </button>
             <button 
               onClick={sendMessage}
               style={{
                 flex: 1,
                 padding: "0.75rem 1rem",
-                fontSize: "14px",
-                background: "#ff4081",
-                border: "none",
+                fontSize: "16px",
+                background: "#ff3050",
+                border: "2px solid #ff3050",
                 borderRadius: "8px",
                 cursor: "pointer",
                 color: "#fff",
-                fontWeight: "bold"
+                fontWeight: "bold",
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+                boxShadow: "0 0 20px rgba(255, 48, 80, 0.6)",
+                transition: "all 0.2s"
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = "0 0 30px rgba(255, 48, 80, 0.9)";
+                e.currentTarget.style.transform = "translateY(-2px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = "0 0 20px rgba(255, 48, 80, 0.6)";
+                e.currentTarget.style.transform = "translateY(0)";
               }}
             >
-              Send
+              Send 💥
             </button>
           </div>
           {showEmojiPicker && (
@@ -146,7 +220,10 @@ export default function GlobalChat({ user, userProfile }) {
                 zIndex: 1000
               }}
             >
-              <Picker data={data} onEmojiSelect={onEmojiSelect} theme="dark" />
+              <CustomEmojiPicker 
+                onEmojiSelect={onEmojiSelect} 
+                onClose={() => setShowEmojiPicker(false)}
+              />
             </div>
           )}
         </div>

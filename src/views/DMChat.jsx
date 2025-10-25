@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChatService } from "../services/chatService.js";
 import { UserService } from "../services/userService.js";
-import data from '@emoji-mart/data';
-import Picker from '@emoji-mart/react';
+import CustomEmojiPicker from "../components/CustomEmojiPicker.jsx";
 
 export default function DMChat({ user, userProfile }) {
   const [messages, setMessages] = useState([]);
@@ -89,7 +88,7 @@ export default function DMChat({ user, userProfile }) {
   };
 
   const onEmojiSelect = (emoji) => {
-    setInput(input + emoji.native);
+    setInput(input + emoji);
     setShowEmojiPicker(false);
   };
 
@@ -108,25 +107,68 @@ export default function DMChat({ user, userProfile }) {
 
   return (
     <div className="hero-background">
-      <div className="overlay-card" style={{ width: "95%", height: "80vh", display: "flex", flexDirection: "column" }}>
-        <h2>Direct Messages</h2>
+      <div style={{ 
+        width: "95%", 
+        maxWidth: "800px",
+        height: "80vh", 
+        display: "flex", 
+        flexDirection: "column",
+        background: "#000000",
+        border: "2px solid #ff3050",
+        borderRadius: "12px",
+        padding: "1.5rem",
+        boxShadow: "0 0 30px rgba(255, 48, 80, 0.5), inset 0 0 20px rgba(255, 48, 80, 0.05)"
+      }}>
+        <h2 style={{ 
+          color: "#ff3050",
+          textShadow: "0 0 15px rgba(255, 48, 80, 0.8)",
+          marginBottom: "1rem",
+          textTransform: "uppercase",
+          letterSpacing: "2px"
+        }}>
+          💬 Direct Messages
+        </h2>
         <div style={{ marginBottom: "0.5rem", position: "relative" }}>
           {recipientProfile ? (
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.5rem", background: "rgba(255, 255, 255, 0.1)", borderRadius: "8px" }}>
+            <div style={{ 
+              display: "flex", 
+              alignItems: "center", 
+              gap: "0.5rem", 
+              padding: "0.75rem", 
+              background: "rgba(255, 48, 80, 0.1)", 
+              borderRadius: "8px",
+              border: "1px solid rgba(255, 48, 80, 0.3)"
+            }}>
               {recipientProfile.avatarURL && (
                 <img 
                   src={recipientProfile.avatarURL} 
                   alt={recipientProfile.nickname} 
-                  style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#fff" }}
+                  style={{ 
+                    width: "32px", 
+                    height: "32px", 
+                    borderRadius: "50%", 
+                    background: "#fff",
+                    border: "2px solid #ff3050"
+                  }}
                 />
               )}
-              <span>Chatting with: <strong>{recipientProfile.nickname}</strong></span>
+              <span style={{ color: "#fff" }}>Chatting with: <strong style={{ color: "#ff3050" }}>{recipientProfile.nickname}</strong></span>
               <button 
                 onClick={() => {
                   setRecipientProfile(null);
                   setMessages([]);
                 }}
-                style={{ marginLeft: "auto", padding: "0.25rem 0.5rem" }}
+                style={{ 
+                  marginLeft: "auto", 
+                  padding: "0.4rem 0.8rem",
+                  background: "#000000",
+                  border: "1px solid #ff3050",
+                  borderRadius: "6px",
+                  color: "#ff3050",
+                  cursor: "pointer",
+                  fontSize: "12px",
+                  fontWeight: "bold"
+                }}
               >
                 Change
               </button>
@@ -139,7 +181,16 @@ export default function DMChat({ user, userProfile }) {
                 value={searchTerm} 
                 onChange={e => setSearchTerm(e.target.value)}
                 onFocus={() => searchTerm.length === 0 && setShowDropdown(true)}
-                style={{ width: "100%", padding: "0.5rem" }}
+                style={{ 
+                  width: "100%", 
+                  padding: "0.75rem",
+                  background: "#000000",
+                  border: "2px solid #ff3050",
+                  borderRadius: "8px",
+                  color: "#fff",
+                  fontSize: "14px",
+                  boxShadow: "0 0 15px rgba(255, 48, 80, 0.3), inset 0 0 10px rgba(255, 48, 80, 0.05)"
+                }}
               />
               {showDropdown && (searchResults.length > 0 || (searchTerm.length === 0 && allUsers.length > 0)) && (
                 <div style={{
@@ -147,13 +198,14 @@ export default function DMChat({ user, userProfile }) {
                   top: "100%",
                   left: 0,
                   right: 0,
-                  background: "rgba(30, 30, 46, 0.98)",
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  background: "#000000",
+                  border: "2px solid #ff3050",
                   borderRadius: "8px",
                   maxHeight: "300px",
                   overflowY: "auto",
                   zIndex: 1000,
-                  marginTop: "0.25rem"
+                  marginTop: "0.25rem",
+                  boxShadow: "0 0 20px rgba(255, 48, 80, 0.6)"
                 }}>
                   {(searchTerm.length > 0 ? searchResults : allUsers).map((u) => (
                     <div
@@ -168,7 +220,7 @@ export default function DMChat({ user, userProfile }) {
                         borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
                         transition: "background 0.2s"
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)"}
+                      onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255, 48, 80, 0.2)"}
                       onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                     >
                       {u.avatarURL && (
@@ -191,14 +243,26 @@ export default function DMChat({ user, userProfile }) {
             </>
           )}
         </div>
-        <div style={{ flex: 1, overflowY: "auto", marginBottom: "1rem", border: "1px solid #fff", padding: "0.5rem", display: "flex", flexDirection: "column", gap: "0.5rem", background: "rgba(0, 0, 0, 0.3)" }}>
+        <div style={{ 
+          flex: 1, 
+          overflowY: "auto", 
+          marginBottom: "1rem", 
+          border: "1px solid rgba(255, 48, 80, 0.3)", 
+          padding: "0.5rem", 
+          display: "flex", 
+          flexDirection: "column", 
+          gap: "0.5rem", 
+          background: "rgba(0, 0, 0, 0.5)",
+          borderRadius: "8px",
+          boxShadow: "inset 0 0 15px rgba(255, 48, 80, 0.1)"
+        }}>
           {!recipientProfile && (
-            <div style={{ textAlign: "center", color: "rgba(255, 255, 255, 0.5)", padding: "2rem" }}>
+            <div style={{ textAlign: "center", color: "rgba(255, 48, 80, 0.5)", padding: "2rem" }}>
               Select a user above to start chatting
             </div>
           )}
           {messages.length === 0 && recipientProfile && (
-            <div style={{ textAlign: "center", color: "rgba(255, 255, 255, 0.5)", padding: "2rem" }}>
+            <div style={{ textAlign: "center", color: "rgba(255, 48, 80, 0.5)", padding: "2rem" }}>
               No messages yet. Start the conversation!
             </div>
           )}
@@ -210,12 +274,25 @@ export default function DMChat({ user, userProfile }) {
                   <img 
                     src={m.fromAvatarURL} 
                     alt={m.fromNickname} 
-                    style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#fff" }}
+                    style={{ 
+                      width: "32px", 
+                      height: "32px", 
+                      borderRadius: "50%", 
+                      background: "#fff",
+                      border: "2px solid #ff3050"
+                    }}
                   />
                 )}
-                <div style={{ maxWidth: "70%", background: isFromMe ? "rgba(255, 64, 129, 0.3)" : "rgba(102, 126, 234, 0.3)", padding: "0.75rem", borderRadius: "8px", border: `1px solid ${isFromMe ? "rgba(255, 64, 129, 0.5)" : "rgba(102, 126, 234, 0.5)"}` }}>
+                <div style={{ 
+                  maxWidth: "70%", 
+                  background: isFromMe ? "rgba(255, 48, 80, 0.2)" : "rgba(255, 48, 80, 0.1)", 
+                  padding: "0.75rem", 
+                  borderRadius: "8px", 
+                  border: `2px solid ${isFromMe ? "rgba(255, 48, 80, 0.5)" : "rgba(255, 48, 80, 0.3)"}`,
+                  boxShadow: "0 0 10px rgba(255, 48, 80, 0.2)"
+                }}>
                   <div>
-                    <strong style={{ color: isFromMe ? "#ff4081" : "#667eea" }}>{m.fromNickname}:</strong>{" "}
+                    <strong style={{ color: "#ff3050", textShadow: "0 0 8px rgba(255, 48, 80, 0.6)" }}>{m.fromNickname}:</strong>{" "}
                     <span style={{ color: "#fff" }}>{m.text}</span>
                   </div>
                 </div>
@@ -223,7 +300,13 @@ export default function DMChat({ user, userProfile }) {
                   <img 
                     src={m.fromAvatarURL} 
                     alt={m.fromNickname} 
-                    style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#fff" }}
+                    style={{ 
+                      width: "32px", 
+                      height: "32px", 
+                      borderRadius: "50%", 
+                      background: "#fff",
+                      border: "2px solid #ff3050"
+                    }}
                   />
                 )}
               </div>
@@ -240,8 +323,12 @@ export default function DMChat({ user, userProfile }) {
               resize: "vertical",
               fontSize: "16px",
               borderRadius: "8px",
-              border: "2px solid #ff4081",
-              boxSizing: "border-box"
+              border: "2px solid #ff3050",
+              boxSizing: "border-box",
+              background: "#000000",
+              color: "#fff",
+              boxShadow: "0 0 15px rgba(255, 48, 80, 0.3), inset 0 0 10px rgba(255, 48, 80, 0.05)",
+              opacity: recipientProfile ? 1 : 0.5
             }} 
             value={input} 
             onChange={e => setInput(e.target.value)} 
@@ -254,16 +341,20 @@ export default function DMChat({ user, userProfile }) {
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
               disabled={!recipientProfile}
               style={{
-                padding: "0.75rem",
-                fontSize: "24px",
-                background: "#667eea",
-                border: "none",
+                padding: "0.75rem 1rem",
+                fontSize: "18px",
+                background: "#000000",
+                border: "2px solid #ff3050",
                 borderRadius: "8px",
                 cursor: recipientProfile ? "pointer" : "not-allowed",
-                opacity: recipientProfile ? 1 : 0.5
+                color: "#ff3050",
+                fontWeight: "bold",
+                boxShadow: recipientProfile ? "0 0 15px rgba(255, 48, 80, 0.5)" : "none",
+                opacity: recipientProfile ? 1 : 0.3,
+                transition: "all 0.2s"
               }}
             >
-              😊
+              🎮
             </button>
             <button 
               onClick={sendDM} 
@@ -271,17 +362,21 @@ export default function DMChat({ user, userProfile }) {
               style={{
                 flex: 1,
                 padding: "0.75rem 1rem",
-                fontSize: "14px",
-                background: "#ff4081",
-                border: "none",
+                fontSize: "16px",
+                background: recipientProfile ? "#ff3050" : "#000000",
+                border: "2px solid #ff3050",
                 borderRadius: "8px",
                 cursor: recipientProfile ? "pointer" : "not-allowed",
                 color: "#fff",
                 fontWeight: "bold",
-                opacity: recipientProfile ? 1 : 0.5
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+                boxShadow: recipientProfile ? "0 0 20px rgba(255, 48, 80, 0.6)" : "none",
+                opacity: recipientProfile ? 1 : 0.3,
+                transition: "all 0.2s"
               }}
             >
-              Send
+              Send 💥
             </button>
           </div>
           {showEmojiPicker && (
@@ -295,7 +390,10 @@ export default function DMChat({ user, userProfile }) {
                 zIndex: 1000
               }}
             >
-              <Picker data={data} onEmojiSelect={onEmojiSelect} theme="dark" />
+              <CustomEmojiPicker 
+                onEmojiSelect={onEmojiSelect} 
+                onClose={() => setShowEmojiPicker(false)}
+              />
             </div>
           )}
         </div>
