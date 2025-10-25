@@ -23,12 +23,14 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState(null);
   const [checkingSetup, setCheckingSetup] = useState(true);
+  const [profileLoaded, setProfileLoaded] = useState(false);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       console.log("Loading timeout - forcing end of loading state");
       setLoading(false);
       setCheckingSetup(false);
+      setProfileLoaded(true);
     }, 5000);
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -50,8 +52,10 @@ export default function App() {
           console.error("Error fetching profile:", error);
           setUserProfile(null);
         }
+        setProfileLoaded(true);
       } else {
         setUserProfile(null);
+        setProfileLoaded(true);
       }
       
       clearTimeout(timeout);
@@ -65,7 +69,7 @@ export default function App() {
     };
   }, []);
 
-  if (loading || checkingSetup) return <LoadingScreen />;
+  if (loading || checkingSetup || !profileLoaded) return <LoadingScreen />;
 
   if (!user) return <Login />;
 
