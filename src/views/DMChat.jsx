@@ -191,7 +191,12 @@ export default function DMChat({ user, userProfile }) {
             </>
           )}
         </div>
-        <div style={{ flex: 1, overflowY: "auto", marginBottom: "1rem", border: "1px solid #fff", padding: "0.5rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+        <div style={{ flex: 1, overflowY: "auto", marginBottom: "1rem", border: "1px solid #fff", padding: "0.5rem", display: "flex", flexDirection: "column", gap: "0.5rem", background: "rgba(0, 0, 0, 0.3)" }}>
+          {!recipientProfile && (
+            <div style={{ textAlign: "center", color: "rgba(255, 255, 255, 0.5)", padding: "2rem" }}>
+              Select a user above to start chatting
+            </div>
+          )}
           {messages.length === 0 && recipientProfile && (
             <div style={{ textAlign: "center", color: "rgba(255, 255, 255, 0.5)", padding: "2rem" }}>
               No messages yet. Start the conversation!
@@ -208,10 +213,10 @@ export default function DMChat({ user, userProfile }) {
                     style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#fff" }}
                   />
                 )}
-                <div style={{ maxWidth: "70%", background: isFromMe ? "rgba(255, 64, 129, 0.2)" : "rgba(255, 255, 255, 0.1)", padding: "0.5rem", borderRadius: "8px" }}>
+                <div style={{ maxWidth: "70%", background: isFromMe ? "rgba(255, 64, 129, 0.3)" : "rgba(102, 126, 234, 0.3)", padding: "0.75rem", borderRadius: "8px", border: `1px solid ${isFromMe ? "rgba(255, 64, 129, 0.5)" : "rgba(102, 126, 234, 0.5)"}` }}>
                   <div>
                     <strong style={{ color: isFromMe ? "#ff4081" : "#667eea" }}>{m.fromNickname}:</strong>{" "}
-                    <span>{m.text}</span>
+                    <span style={{ color: "#fff" }}>{m.text}</span>
                   </div>
                 </div>
                 {isFromMe && m.fromAvatarURL && (

@@ -61,24 +61,30 @@ export default function GlobalChat({ user, userProfile }) {
     <div className="hero-background">
       <div className="overlay-card" style={{ width: "95%", height: "80vh", display: "flex", flexDirection: "column" }}>
         <h2>Global Chat</h2>
-        <div style={{ flex: 1, overflowY: "auto", marginBottom: "1rem", border: "1px solid #fff", padding: "0.5rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-          {messages.map((m) => (
-            <div key={m.id} style={{ display: "flex", gap: "0.5rem", alignItems: "flex-start" }}>
-              {m.avatarURL && (
-                <img 
-                  src={m.avatarURL} 
-                  alt={m.nickname} 
-                  style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#fff" }}
-                />
-              )}
-              <div style={{ flex: 1 }}>
-                <div>
-                  <strong style={{ color: "#ff4081" }}>{m.nickname}:</strong>{" "}
-                  <span>{m.text}</span>
+        <div style={{ flex: 1, overflowY: "auto", marginBottom: "1rem", border: "1px solid #fff", padding: "0.5rem", display: "flex", flexDirection: "column", gap: "0.5rem", background: "rgba(0, 0, 0, 0.3)" }}>
+          {messages.length === 0 ? (
+            <div style={{ textAlign: "center", color: "rgba(255, 255, 255, 0.5)", padding: "2rem" }}>
+              No messages yet. Be the first to send a message!
+            </div>
+          ) : (
+            messages.map((m) => (
+              <div key={m.id} style={{ display: "flex", gap: "0.5rem", alignItems: "flex-start", padding: "0.5rem", background: "rgba(255, 255, 255, 0.05)", borderRadius: "8px" }}>
+                {m.avatarURL && (
+                  <img 
+                    src={m.avatarURL} 
+                    alt={m.nickname} 
+                    style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#fff" }}
+                  />
+                )}
+                <div style={{ flex: 1 }}>
+                  <div>
+                    <strong style={{ color: "#ff4081" }}>{m.nickname}:</strong>{" "}
+                    <span style={{ color: "#fff" }}>{m.text}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
         <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
           <textarea 
